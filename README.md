@@ -97,11 +97,7 @@ autopairs functionality.
 The `syntax/factor/generated.vim` syntax highlighting file is
 automatically generated to include the names of all the
 vocabularies Factor knows about.
-To regenerate it manually, run the following code in the
-listener:
 
-    "editors.vim.generate-syntax" run
+To regenerate it manually, run the following command line:
 
-or run it from the command line:
-
-    factor -run=editors.vim.generate-syntax
+    factor syntax/factor/generated.factor > syntax/factor/generated.vim
