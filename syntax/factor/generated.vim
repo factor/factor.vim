@@ -3,7 +3,7 @@
 " Maintainer: Alex Chapman <chapman.alex@gmail.com>
 " Last Change: 2024 Oct 05
 " Minimum Version: 600
-" To regenerate: USE: editors.vim.generate-syntax generate-vim-syntax
+" To regenerate: factor generated.factor > generate.vim
 
 if exists('b:factorsyn_no_generated')
   finish
