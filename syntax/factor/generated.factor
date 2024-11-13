@@ -67,7 +67,7 @@ CONSTANT: highlighted-vocabs {
 " Last Change: ]=] write
     now-gmt { YYYY " " MONTH " " DD } formatted [=[
 " Minimum Version: 600
-" To regenerate: USE: editors.vim.generate-syntax generate-vim-syntax
+" To regenerate: factor generated.factor > generate.vim
 
 if exists('b:factorsyn_no_generated')
   finish
