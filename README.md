@@ -69,7 +69,7 @@ to this command.
 In order for the `:FactorVocab` command to work, you'll need to
 set some variables in your vimrc file.
 
-### g:FactorRoot
+### g:FactorResourcePath
 
 This variable should be set to the root of your Factor
 installation. The default value is `~/factor`.
