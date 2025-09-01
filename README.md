@@ -100,9 +100,9 @@ A simple configuration like this could be inserted into
 ```vimscript
 let g:FactorResourcePath='~/factor/'
 let g:FactorAdditionalVocabRoots=[
-  \'/home/username/projects/',
-  \'/home/username/random/',
-  \]
+    \'/home/username/projects/',
+    \'/home/username/random/',
+    \]
 function! FactorNewVocabRoot() abort
     return '/home/username/projects/'
 endfunction
