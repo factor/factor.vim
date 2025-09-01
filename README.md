@@ -79,7 +79,9 @@ installation. The default value is `~/factor/`.
 This variable should be set to a list of Factor vocabulary
 roots other than the default ones (`core`, `basis`, `extra` and
 `work`). The paths may be absolute paths or use the
-`resource:` prefix to be relative to `g:FactorResourcePath`.
+`resource:` prefix to be relative to `g:FactorResourcePath`. If
+not set the `~/.factor-roots` configuration file will be parsed
+for additional vocablary roots.
 
 ### FactorNewVocabRoot()
 
@@ -100,8 +102,8 @@ A simple configuration like this could be inserted into
 ```vimscript
 let g:FactorResourcePath='~/factor/'
 let g:FactorAdditionalVocabRoots=[
-    \'/home/username/projects/',
-    \'/home/username/random/',
+    \'~/projects/',
+    \'~/random/',
     \]
 function! FactorNewVocabRoot() abort
     return '/home/username/projects/'
