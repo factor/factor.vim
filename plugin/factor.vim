@@ -16,9 +16,11 @@ endif
 " let g:FactorAdditionalVocabRoots = ... " see autoload/factor.vim
 unlet! g:FactorVocabRoots
 
-if !exists('*FactorNewVocabRoot') | function! FactorNewVocabRoot() abort
-    return 'resource:work'
-endfunction | endif
+if !exists('*FactorNewVocabRoot')
+    function! FactorNewVocabRoot() abort
+        return 'resource:work'
+    endfunction
+endif
 
 command! -bar -bang -range=1 -nargs=1 -complete=customlist,factor#complete_vocab_glob FactorVocab
             \ execute factor#go_to_vocab_command(<count>,"edit<bang>",<q-args>)

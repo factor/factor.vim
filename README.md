@@ -72,25 +72,42 @@ set some variables in your vimrc file.
 ### g:FactorResourcePath
 
 This variable should be set to the root of your Factor
-installation. The default value is `~/factor`.
+installation. The default value is `~/factor/`.
 
-### g:FactorVocabRoots
+### g:FactorAdditionalVocabRoots
 
 This variable should be set to a list of Factor vocabulary
-roots. The paths may be either relative to g:FactorRoot or
-absolute paths. The default value is `["core", "basis", "extra",
-"work"]`.
+roots other than the default ones (`core`, `basis`, `extra` and
+`work`). The paths may be absolute paths or use the
+`resource:` prefix to be relative to `g:FactorResourcePath`.
 
-### g:FactorNewVocabRoot
+### FactorNewVocabRoot()
 
-This variable should be set to the vocabulary root in which
-vocabularies created with NewFactorVocab should be created. The
-default value is `work`.
+This function should be defined to return the vocabulary root in
+which vocabularies created with NewFactorVocab should be
+created. The default implementation returns `resource:work`.
 
 ### g:EnableFactorAutopairs
 
 This variable should be set to 1 if you want to enable the
 autopairs functionality.
+
+### Example
+
+A simple configuration like this could be inserted into
+`.vimrc`:
+
+```vimscript
+let g:FactorResourcePath='~/factor/'
+let g:FactorAdditionalVocabRoots=[
+  \'/home/username/projects/',
+  \'/home/username/random/',
+  \]
+function! FactorNewVocabRoot() abort
+    return '/home/username/projects/'
+endfunction
+let g:EnableFactorAutopairs=1
+```
 
 ## Note
 
