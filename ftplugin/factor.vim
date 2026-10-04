@@ -30,6 +30,22 @@ setlocal iskeyword=33-126,128-255
 " matchit patterns
 let b:match_words = '\<<PRIVATE\>:\<PRIVATE>\>'
 
+let b:undo_ftplugin = 'setlocal expandtab< tabstop< shiftwidth< softtabstop< textwidth< colorcolumn< comments< commentstring< iskeyword< | unlet! b:match_words'
+
+for [s:key, s:target, s:command] in [
+      \ ['fi', 'Impl', ':FactorVocabImpl<CR>'],
+      \ ['fd', 'Docs', ':FactorVocabDocs<CR>'],
+      \ ['ft', 'Tests', ':FactorVocabTests<CR>'],
+      \ ['fv', 'Vocab', ':FactorVocab<Space>'],
+      \ ['fn', 'NewVocab', ':NewFactorVocab<Space>']]
+  execute 'nnoremap <silent> <buffer> <Plug>(Factor'.s:target.') '.s:command
+  let b:undo_ftplugin .= " | execute 'silent! nunmap <buffer> <Plug>(Factor".s:target.")'"
+  if get(g:, 'FactorMappings', 1) && empty(maparg('<Leader>'.s:key, 'n'))
+    execute 'nmap <silent> <buffer> <Leader>'.s:key.' <Plug>(Factor'.s:target.')'
+    let b:undo_ftplugin .= " | execute 'silent! nunmap <buffer> <Leader>".s:key."'"
+  endif
+endfor
+
 " Insert closing brackets and quotes, spaces, stack effects ...
 " examples ("|" is the position of the cursor):
 " |if + [ → [|] if
@@ -43,49 +59,56 @@ let b:match_words = '\<<PRIVATE\>:\<PRIVATE>\>'
 if exists("g:EnableFactorAutopairs") &&
       \g:EnableFactorAutopairs == 1
 
-  function s:RemoveTrailingSpaces()
+  function! s:RemoveTrailingSpaces()
     let save_view = winsaveview()
     %s/ \+$//e
     call winrestview(save_view)
   endfunction
 
-  au BufWrite <buffer> :call s:RemoveTrailingSpaces()
+  augroup factor_autopairs
+    autocmd! * <buffer>
+    autocmd BufWritePre <buffer> call s:RemoveTrailingSpaces()
+  augroup END
+  let b:undo_ftplugin .= " | execute 'autocmd! factor_autopairs * <buffer>'"
+  for s:key in ['(', '[', '{', '=', '"', '<CR>', '<BS>', '<Space>']
+    let b:undo_ftplugin .= " | execute 'silent! iunmap <buffer> ".s:key."'"
+  endfor
 
-  function s:Insert(before, after)
+  function! s:Insert(before, after)
     return a:before .. a:after ..
           \repeat("\<C-G>U\<Left>", strlen(a:after))
   endfunction
 
-  function s:PadAfter()
+  function! s:PadAfter()
     return getline('.')[col('.') - 1] != ' ' ?
           \s:Insert('', ' ') : ''
   endfunction
 
-  function s:Context()
+  function! s:Context()
     return strpart(getline('.'), col('.') - 2, 2)
   endfunction
 
-  function s:WiderContext()
+  function! s:WiderContext()
     return strpart(getline('.'), col('.') - 3, 4)
   endfunction
 
-  function s:OpenParenthesis()
+  function! s:OpenParenthesis()
     return (s:Context() != '()' ? s:PadAfter() : '') ..
           \s:Insert('(', ')')
   endfunction
 
-  function s:OpenBracket()
+  function! s:OpenBracket()
     let context = s:Context()
     return (
           \context != '==' && context != '[]' ? s:PadAfter() : ''
           \) .. s:Insert('[', ']')
   endfunction
 
-  function s:OpenBrace()
+  function! s:OpenBrace()
     return s:PadAfter() .. s:Insert('{', '}')
   endfunction
 
-  function s:Equal()
+  function! s:Equal()
     let context = s:Context()
     if context == '[]' || context == '=='
       return s:Insert('=', '=')
@@ -94,12 +117,12 @@ if exists("g:EnableFactorAutopairs") &&
     endif
   endfunction
 
-  function s:Quote()
+  function! s:Quote()
     return s:Context() == '""' ? '' :
           \(s:PadAfter() .. s:Insert('"', '"'))
   endfunction
 
-  function s:Return()
+  function! s:Return()
     let context = s:Context()
     let widercontext = s:WiderContext()
     if context == '[]' || context == '{}' ||
@@ -110,7 +133,7 @@ if exists("g:EnableFactorAutopairs") &&
     endif
   endfunction
 
-  function s:Backspace()
+  function! s:Backspace()
     let context = s:Context()
     let widercontext = s:WiderContext()
     if widercontext == '[  ]' || widercontext == '(  )' ||
@@ -123,7 +146,7 @@ if exists("g:EnableFactorAutopairs") &&
     endif
   endfunction
 
-  function s:Space()
+  function! s:Space()
     let context = s:Context()
     if context == '[]' || context == '{}' ||
           \s:WiderContext() == '(())' ||
