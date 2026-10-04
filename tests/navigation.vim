@@ -20,7 +20,9 @@ edit /tmp/path-docs-part/foo-tests.factor
 call assert_equal('/tmp/path-docs-part/foo', FactorFileBase())
 call delete(s:temp, 'rf')
 if !empty(v:errors)
-  call writefile(v:errors, '/dev/stderr')
+  for s:error in v:errors
+    echomsg s:error
+  endfor
   cquit
 endif
 qa!

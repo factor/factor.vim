@@ -4,12 +4,19 @@ Vim support for Factor
 This directory contains various support files that make editing
 Factor code more pleasant in Vim.
 
+Requires Vim 8.2 or later.
+
 ## Installation
 
 The file-layout exactly matches the Vim runtime structure, so
 you can install them by copying the contents of this directory
 into `~/.vim/` or the equivalent path on other platforms (open
-Vim and type `:help 'runtimepath'` for details).
+Vim and type `:help 'runtimepath'` for details). Enable support with
+`filetype plugin indent on` and `syntax enable` in your vimrc.
+
+You can also install this repository as a native package under
+`~/.vim/pack/plugins/start/factor.vim`. Run
+`:helptags ALL` after installation, then see `:help factor`.
 
 ## File organization
 
@@ -69,30 +76,38 @@ to this command.
 In order for the `:FactorVocab` command to work, you'll need to
 set some variables in your vimrc file.
 
-### g:FactorResourcePath
+```vim
+let g:FactorResourcePath = '~/factor/'
+let g:FactorAdditionalVocabRoots = ['~/my-factor-vocabs']
+let g:FactorNewVocabRoot = 'resource:work'
+```
 
-This variable should be set to the root of your Factor
-installation. The default value is `~/factor/`.
+`g:FactorResourcePath` is the Factor installation directory. The
+trailing separator is optional.
 
-### g:FactorAdditionalVocabRoots
+`g:FactorDefaultVocabRoots` defaults to `['resource:core',
+'resource:basis', 'resource:extra', 'resource:work']`. `resource:`
+paths are relative to the installation directory.
 
-This variable should be set to a list of Factor vocabulary
-roots other than the default ones (`core`, `basis`, `extra` and
-`work`). The paths may be absolute paths or use the
-`resource:` prefix to be relative to `g:FactorResourcePath`. If
-not set the `~/.factor-roots` configuration file will be parsed
-for additional vocablary roots.
+`g:FactorAdditionalVocabRoots` adds filesystem roots; if unset,
+these are read from nonempty lines in `~/.factor-roots`. Use absolute
+or `~/` paths, or `resource:` paths relative to `g:FactorResourcePath`. `g:FactorVocabRoots` overrides the complete root list.
+Otherwise, it caches the combined list; unlet it after changing roots.
 
-### FactorNewVocabRoot()
+`g:FactorNewVocabRoot` chooses where new vocabularies are created
+(default: `resource:work`). The root must already exist. Defining
+`FactorNewVocabRoot()` before loading the plugin overrides this setting.
+New vocabulary files are written when you save the buffer.
 
-This function should be defined to return the vocabulary root in
-which vocabularies created with NewFactorVocab should be
-created. The default implementation returns `resource:work`.
+Default leader mappings apply only in Factor buffers and preserve
+existing mappings. Set `g:FactorMappings = 0` to disable them; the
+`<Plug>(FactorImpl)`, `<Plug>(FactorDocs)`, `<Plug>(FactorTests)`,
+`<Plug>(FactorVocab)`, and `<Plug>(FactorNewVocab)` targets remain available.
 
-### g:EnableFactorAutopairs
+Set `g:EnableFactorAutopairs = 1` to enable automatic pairing and
+spacing. This also trims trailing spaces before saving Factor buffers.
 
-This variable should be set to 1 if you want to enable the
-autopairs functionality.
+See `:help factor-settings` and `:help factor-syntax` for details.
 
 ### Example
 
@@ -114,9 +129,15 @@ let g:EnableFactorAutopairs=1
 ## Note
 
 The `syntax/factor/generated.vim` syntax highlighting file is
-automatically generated to include the names of all the
-vocabularies Factor knows about.
+automatically generated to include the word names from selected common Factor vocabularies.
 
 To regenerate it manually, run the following command line:
 
     factor syntax/factor/generated.factor > syntax/factor/generated.vim
+
+## Development
+
+Run the regression suite with `sh tests/run.sh`. It uses clean headless
+Vim sessions and covers navigation, syntax loading, filetype cleanup,
+and indentation with and without highlighting. Set `VIM` to select
+another Vim executable.

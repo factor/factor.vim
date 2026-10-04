@@ -1,0 +1,81 @@
+*factor.txt*  Factor support for Vim 8.2 and later
+
+COMMANDS                                                     *factor-commands*
+
+:FactorVocab {vocab}     Edit a vocabulary's implementation file.
+:NewFactorVocab {vocab}  Create its directory and open a new implementation.
+                        Save the buffer to write the file. No boilerplate is
+                        inserted. The creation root must already exist.
+Both commands accept ! to discard unsaved changes and a count to select among
+matching paths (sorted lexically). Tab completion uses vocabulary roots.
+
+:FactorVocabImpl         Edit the current vocabulary's implementation.
+:FactorVocabDocs         Edit its -docs.factor file.
+:FactorVocabTests        Edit its -tests.factor file.
+
+CONFIGURATION                                                *factor-settings*
+
+Set these in your vimrc before loading the plugin:
+>
+  let g:FactorResourcePath = '~/factor/'
+  let g:FactorAdditionalVocabRoots = ['~/my-factor-vocabs']
+  let g:FactorNewVocabRoot = 'resource:work'
+<
+Resource paths work with or without a trailing separator.
+
+*g:FactorDefaultVocabRoots*
+Defaults to ['resource:core', 'resource:basis', 'resource:extra',
+'resource:work']. resource: paths are relative to g:FactorResourcePath.
+
+*g:FactorAdditionalVocabRoots*
+Additional roots appended to the default roots. If unset, reads nonempty lines
+from ~/.factor-roots. Plain roots are filesystem paths; use absolute paths or
+~/ paths. vocab: paths extend roots preceding them in the list.
+
+*g:FactorVocabRoots*
+Overrides the complete root list. Otherwise the combined default and additional
+roots are cached here. After changing those settings, :unlet g:FactorVocabRoots
+to refresh the cache.
+
+*g:FactorNewVocabRoot*
+Defaults to 'resource:work'. Advanced users may define FactorNewVocabRoot()
+before plugin loading to choose the creation root dynamically; this takes
+precedence over the variable.
+
+MAPPINGS                                                     *factor-mappings*
+
+Factor buffers receive these defaults only if the keys are unmapped:
+  <Leader>fi    <Plug>(FactorImpl)
+  <Leader>fd    <Plug>(FactorDocs)
+  <Leader>ft    <Plug>(FactorTests)
+  <Leader>fv    <Plug>(FactorVocab)       Start a command awaiting a vocab name.
+  <Leader>fn    <Plug>(FactorNewVocab)    Start a command awaiting a vocab name.
+
+Set g:FactorMappings = 0 to disable default leader mappings. The buffer-local
+<Plug> mappings remain available for custom bindings.
+
+*g:EnableFactorAutopairs*
+Set to 1 to enable Factor-specific insert-mode pairing and spacing. This also
+removes trailing spaces before saving Factor buffers. Default: disabled.
+
+HIGHLIGHTING                                                 *factor-syntax*
+
+Set g:factor_syn_no_rainbow to disable rainbow delimiters.
+Set g:factor_syn_no_error to disable most syntax error highlighting.
+Set g:factor_syn_no_init to skip the main syntax file's highlight setup.
+Set b:factor_syn_no_generated before syntax loading to skip generated keywords.
+These switches use existence, rather than their values.
+
+The generated keyword list covers selected common vocabularies. Regenerate it
+with the Factor language VM (some systems also have an unrelated factor command):
+>
+  factor syntax/factor/generated.factor > syntax/factor/generated.vim
+<
+INDENTATION                                                  *factor-indent*
+
+Indentation handles definition/import continuations, nested arrays and
+quotations, blank lines, and leading closing delimiters. It ignores strings and
+comments; syntax highlighting improves handling of multiline strings. It is a
+heuristic and does not implement Factor's extensible parser.
+
+vim:tw=78:ts=8:ft=help:norl:
