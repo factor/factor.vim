@@ -2,7 +2,7 @@
 " Language: Factor
 " Maintainer: Alex Chapman <chapman.alex@gmail.com>
 " Last Change: 2020 Sep 30
-" Minimum Version: 600
+" Minimum Version: Vim 8.2
 
 " Factor |syntax| file guide & conventions:
 "
@@ -63,6 +63,8 @@ syn cluster factorClusterValue      contains=factorBreakpoint,factorBoolean,fact
 
 " Almost any byte in Factor can be a part of a word
 syn iskeyword 33-126,128-255
+
+runtime! syntax/factor/generated.vim
 
 " A crash course on Factor's lexer:
 "
@@ -507,8 +509,8 @@ if !exists('g:factor_syn_no_init')
     hi   hlLevel8 ctermfg=blue          guifg=darkslateblue
     hi   hlLevel9 ctermfg=darkmagenta   guifg=darkviolet
   endif
+  delcommand HiLink
 endif
-delcommand HiLink
 
 let b:current_syntax = 'factor'
 

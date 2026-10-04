@@ -66,15 +66,15 @@ CONSTANT: highlighted-vocabs {
 " Maintainer: Alex Chapman <chapman.alex@gmail.com>
 " Last Change: ]=] write
     now-gmt { YYYY " " MONTH " " DD } formatted [=[
-" Minimum Version: 600
-" To regenerate: factor generated.factor > generate.vim
+" Minimum Version: Vim 8.2
+" To regenerate: factor generated.factor > generated.vim
 
-if exists('b:factorsyn_no_generated')
+if exists('b:factor_syn_no_generated')
   finish
 endif
 
 command -nargs=+ -bar HiLink hi def link <args>
-function s:syn_keyword_factor_word(group, ...)
+function! s:syn_keyword_factor_word(group, ...)
   execute 'HiLink' a:group 'factorWord'
   execute 'syn' 'cluster' 'factorWord' 'add=' . a:group
 endfunction
