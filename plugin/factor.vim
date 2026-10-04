@@ -1,10 +1,9 @@
 " Location:     plugin/factor.vim
 
-nmap <silent> <Leader>fi :FactorVocabImpl<CR>
-nmap <silent> <Leader>fd :FactorVocabDocs<CR>
-nmap <silent> <Leader>ft :FactorVocabTests<CR>
-nmap <Leader>fv :FactorVocab<SPACE>
-nmap <Leader>fn :NewFactorVocab<SPACE>
+if exists('g:loaded_factor')
+    finish
+endif
+let g:loaded_factor = 1
 
 if !exists('g:FactorResourcePath')
     let g:FactorResourcePath = '~/factor/'
@@ -14,11 +13,10 @@ if !exists('g:FactorDefaultVocabRoots')
     let g:FactorDefaultVocabRoots = ['resource:core', 'resource:basis', 'resource:extra', 'resource:work']
 endif
 " let g:FactorAdditionalVocabRoots = ... " see autoload/factor.vim
-unlet! g:FactorVocabRoots
 
 if !exists('*FactorNewVocabRoot')
     function! FactorNewVocabRoot() abort
-        return 'resource:work'
+        return get(g:, 'FactorNewVocabRoot', 'resource:work')
     endfunction
 endif
 
@@ -32,8 +30,7 @@ command! -bar FactorVocabTests :call GoToFactorVocabTests()
 
 function! FactorFileBase()
     let filename = expand('%:r')
-    let filename = substitute(filename, '-docs', '', '')
-    let filename = substitute(filename, '-tests', '', '')
+    let filename = substitute(filename, '-\(docs\|tests\)$', '', '')
     return filename
 endfunction
 

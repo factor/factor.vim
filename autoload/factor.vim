@@ -66,7 +66,7 @@ function! factor#expand_vocab_roots(vocab_roots)
       endwhile
     else
       call add(expanded_vocab_roots,
-            \ vocab_root =~# '^resource:' ? g:FactorResourcePath..vocab_root[9:] : vocab_root)
+            \ vocab_root =~# '^resource:' ? s:ensure_last_path_sep(g:FactorResourcePath)..vocab_root[9:] : vocab_root)
     endif
   endfor
   return expanded_vocab_roots
@@ -166,7 +166,7 @@ function! factor#go_to_vocab_command(count, cmd, vocab) abort
   let sep = !exists('+shellslash') || &shellslash ? '/' : '\'
   let vocab_glob = 'vocab:'..substitute(a:vocab, '\.', sep, 'g')..sep..matchstr(a:vocab, '[^.]*$')..'.factor'
   let vocab_file = get(factor#glob(vocab_glob, 0, 2, 1), a:count - 1, 0)
-  if !!vocab_file
+  if vocab_file is# 0
     return 'echoerr '..string('Factor: Can''t find vocabulary '..a:vocab..' in vocabulary roots')
   endif
   return a:cmd..' '..fnameescape(vocab_file)
@@ -176,14 +176,12 @@ function! factor#make_vocab_command(count, cmd, vocab) abort
   let sep = !exists('+shellslash') || &shellslash ? '/' : '\'
   let new_vocab_root = FactorNewVocabRoot()
   let vocab_dir = get(factor#glob(new_vocab_root, 0, 1, 1), a:count - 1, 0)
-  if !!vocab_dir
+  if vocab_dir is# 0
       return 'echoerr '..string('Factor: Can''t find new vocabulary root '..
             \ string(new_vocab_root)..' in vocabulary roots')
   endif
   let vocab_dir = fnamemodify(vocab_dir..substitute(a:vocab, '\.', sep, 'g'), ':~')
-  echo vocab_dir
   let vocab_file = vocab_dir..sep..fnamemodify(vocab_dir, ':t')..'.factor'
-  echo vocab_file
   call mkdir(vocab_dir, 'p')
   return a:cmd..' '..fnameescape(vocab_file)
 endfunction
